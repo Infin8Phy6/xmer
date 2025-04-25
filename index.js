@@ -45,8 +45,8 @@ app.post('/api/logTransaction', async (req, res) => {
     });
 
     // Check if Google Apps Script responds with success
-    if (response.data.message === "Transaction logged successfully") {
-      return res.status(200).json({ message: 'Transaction logged successfully in Google Sheets' });
+    if (response.data.message === "Transaction logged successfully and email sent") {
+      return res.status(200).json({ message: 'Please Check your Email for the details of the Transaction.' });
     } else {
       return res.status(500).json({ error: 'Failed to log transaction in Google Sheets' });
     }
