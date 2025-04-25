@@ -1,0 +1,37 @@
+function doPost(e) {
+  try {
+    // Parsing the payload sent by axios (from Express server)
+    var data = JSON.parse(e.postData.contents);
+    
+    var email = data.email;
+    var otp = data.otp;
+    var txHash = data.txHash;
+
+    // Check if all required fields are provided
+    if (!email || !otp || !txHash) {
+      return ContentService.createTextOutput(JSON.stringify({ error: 'Missing required fields' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Get the active sheet or create a new one if it doesn't exist
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Transactions");
+    if (!sheet) {
+      sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet("Transactions");
+      sheet.appendRow(["Email", "OTP", "TxHash"]); // Header row
+    }
+
+    // Append the transaction data to the sheet
+    sheet.appendRow([email, otp, txHash]);
+
+    // Return success response
+    return ContentService.createTextOutput(JSON.stringify({ message: 'Transaction logged successfully' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+
+
+  } catch (error) {
+    // Return error message in case of failure
+    return ContentService.createTextOutput(JSON.stringify({ error: error.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
