@@ -59,7 +59,7 @@ app.post('/api/logTransaction', async (req, res) => {
 
 // can we add another api terminal here 
 // Endpoint to handle verification
-app.post('/api//verify', async (req, res) => {
+app.post('/api/verify', async (req, res) => {
   const { data } = req.body; // Extract the verification data from the request body
   
   // Log the received data
