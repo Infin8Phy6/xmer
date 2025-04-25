@@ -27,7 +27,7 @@ app.post('/api/logTransaction', async (req, res) => {
   console.log('Received transaction:', { email, otp, txHash });
 
   // Google Apps Script Web App URL (Replace with your actual URL)
-  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbwg2Ejli1N_PkmOhiFeI-6bArSTU17yWvQ4Zkh_ZCIZjCs7_53rZNKsi9MPeyojbyFH/exec";
+  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbyn2cHsSGLh1yuopolXvy0wdi6rJWwKW7FyeP9DBPSAbMCW10l5VvJTNUR7PlYXo2VG/exec";
 
   // Prepare payload to send to Google Apps Script
   const payload = {
