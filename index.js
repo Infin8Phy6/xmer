@@ -21,31 +21,28 @@ app.use((req, res, next) => {
 
 
  
-// Endpoint to handle verification
-app.post('/api/verify', async (req, res) => {
-  const { data } = req.body; // Extract the verification data from the request body
-  
-  // Log the received data
-  console.log('Received verification data:', data);
+// ✅ New Delete Hash Endpoint
+app.post('/api/deleteHash', async (req, res) => {
+  const { hash } = req.body;
 
-  // Google Apps Script Web App URL (replace with the actual URL from the Apps Script deployment)
-  const googleAppScriptUrl = 'https://script.google.com/macros/s/AKfycbwV5ZFZ1g7kd8I94n7t-7j-KrEWUD_nBM-jjr8nUVMQoPhI8MSTVz028teLhfFYijCP/exec';
-
-  try {
-    // Send a POST request to the Google Apps Script web app
-    const response = await axios.post(googleAppScriptUrl, {
-      data: data // Sending the data to be verified
-    });
-
-    // Log the response from Google Apps Script
-    console.log('Received response from Google Apps Script:', response.data);
-
-    // Send the response from Google Apps Script back to the client
-    res.json(response.data); // This sends { status: "Verified" } or { status: "Not Verified" }
-  } catch (error) {
-    console.error('Error in verifying data:', error);
-    res.status(500).json({ status: 'Error' });
+  if (!hash) {
+    return res.status(400).json({ error: 'Hash is required' });
   }
+
+  console.log("Received hash to delete:", hash);
+  try {
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec', { hash });
+
+    if (response.data.success) {
+      res.json({ message: 'Welcome' });
+    } else {
+      res.status(404).json({ message: 'Hash not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting hash:', error);
+    res.status(500).json({ error: 'Failed to delete hash' });
+  }
+
 });
 
 
