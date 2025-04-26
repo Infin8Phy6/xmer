@@ -67,7 +67,7 @@ app.post('/api/verify', async (req, res) => {
 
   try {
     // Call Google Apps Script with the provided data
-    const response = await axios.post('https://script.google.com/macros/s/AKfycbzdJht4rwqAEiN7Qy285zbz-8HXu0ZXCKolGYWXPPtmRfMTHi_8KyC5VWIyeN3T_Krc/exec', {
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbwRiUiGm13BzKPZvPkM6tDvznya4MCReM5kiVvl4GCitO24F5wKPs00RzktWS5Bk1uY/exec', {
       data: data // Send the data to Google Apps Script
     });
 
