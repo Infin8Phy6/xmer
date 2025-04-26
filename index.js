@@ -93,7 +93,7 @@ app.post('/api/deleteHash', async (req, res) => {
 
   try {
     const response = await axios.post(
-      'https://script.google.com/macros/s/AKfycbzz6hoZE9COWEOeUKdZDxXObM1n-EklB1Jer3nD9vo56gzDAnveL5s8M6pUXd2jn2jK/exec',
+      'https://script.google.com/macros/s/AKfycbyVYlfq_GeDTMt210iwYeoRz3vOPIfeERDmMUf6ggmGHx4KLlAJ1zlYxY2uLb17UAw/exec',
       { hash },
       { headers: { 'Content-Type': 'application/json' } }
     );
