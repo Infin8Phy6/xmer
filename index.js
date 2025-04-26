@@ -1,14 +1,15 @@
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");
+const axios = require("axios");  // Importing Axios
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS and JSON parsing
+// Enable CORS for frontend connections
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // Middleware for parsing JSON requests
 
+// ✅ CORS Headers Middleware (For Cross-Origin Requests)
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -16,7 +17,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Log Transaction Endpoint
 app.post('/api/logTransaction', async (req, res) => {
   const { email, otp, txHash } = req.body;
 
@@ -26,13 +26,27 @@ app.post('/api/logTransaction', async (req, res) => {
 
   console.log('Received transaction:', { email, otp, txHash });
 
-  const googleAppsScriptUrl = "https://script.google.com/macros/s/YOUR_LOG_SCRIPT_ID/exec";
+  // Google Apps Script Web App URL (Replace with your actual URL)
+  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbydsNaie69LgQVR0vW639R2vQ0ksAm_jB556_mn7IelZbkZ-gibCeFqkilJUuwTUcWC/exec";
+
+  // Prepare payload to send to Google Apps Script
+  const payload = {
+    email,
+    otp,
+    txHash,
+  };
 
   try {
-    const response = await axios.post(googleAppsScriptUrl, { email, otp, txHash });
+    // Send the POST request to Google Apps Script using Axios
+    const response = await axios.post(googleAppsScriptUrl, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
+    // Check if Google Apps Script responds with success
     if (response.data.message === "Transaction logged successfully and email sent") {
-      return res.status(200).json({ message: 'Please check your email for the transaction details.' });
+      return res.status(200).json({ message: 'Please Check your Email for the details of the Transaction.' });
     } else {
       return res.status(500).json({ error: 'Failed to log transaction in Google Sheets' });
     }
@@ -42,16 +56,24 @@ app.post('/api/logTransaction', async (req, res) => {
   }
 });
 
-// ✅ Verification Endpoint
+
+// can we add another api terminal here 
+// Endpoint to handle verification
 app.post('/api/verify', async (req, res) => {
-  const { data } = req.body;
+  const { data } = req.body; // Extract the verification data from the request body
+  
+  // Log the received data
   console.log("Received data:", data);
 
   try {
-    const response = await axios.post('https://script.google.com/macros/s/YOUR_VERIFY_SCRIPT_ID/exec', { data });
+    // Call Google Apps Script with the provided data
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbzuoo9GwybRL7aCaHbW32irikx9pYccoShhYtwu5Ss2xHAcxkPIEpSlEDQE62yxORhH/exec', {
+      data: data // Send the data to Google Apps Script
+    });
 
+    // If Google Apps Script returns status "Verified"
     if (response.data.status === 'Verified') {
-      res.json({ status: 'Verified' });
+      res.json({ status: 'Verified' }); // Return verification success
     } else {
       res.status(400).json({ status: 'Failed', message: 'Verification failed.' });
     }
@@ -60,7 +82,6 @@ app.post('/api/verify', async (req, res) => {
     res.status(500).json({ status: 'Error', message: 'Internal server error' });
   }
 });
-
 // ✅ New Delete Hash Endpoint
 app.post('/api/deleteHash', async (req, res) => {
   const { hash } = req.body;
@@ -70,10 +91,20 @@ app.post('/api/deleteHash', async (req, res) => {
   }
 
   console.log("Received hash to delete:", hash);
+  try {
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec', { hash });
 
+    if (response.data.success) {
+      res.json({ message: 'Welcome' });
+    } else {
+      res.status(404).json({ message: 'Hash not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting hash:', error);
+    res.status(500).json({ error: 'Failed to delete hash' });
+  }
 
 });
-
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

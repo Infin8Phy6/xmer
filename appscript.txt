@@ -82,6 +82,29 @@ app.post('/api/verify', async (req, res) => {
     res.status(500).json({ status: 'Error', message: 'Internal server error' });
   }
 });
+// ✅ New Delete Hash Endpoint
+app.post('/api/deleteHash', async (req, res) => {
+  const { hash } = req.body;
+
+  if (!hash) {
+    return res.status(400).json({ error: 'Hash is required' });
+  }
+
+  console.log("Received hash to delete:", hash);
+  try {
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec', { hash });
+
+    if (response.data.success) {
+      res.json({ message: 'Welcome' });
+    } else {
+      res.status(404).json({ message: 'Hash not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting hash:', error);
+    res.status(500).json({ error: 'Failed to delete hash' });
+  }
+
+});
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
