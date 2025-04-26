@@ -1,22 +1,16 @@
+// server.js
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");  // Importing Axios
+const axios = require("axios");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS for frontend connections
+// Middleware
 app.use(cors());
-app.use(express.json()); // Middleware for parsing JSON requests
+app.use(express.json());
 
-// ✅ CORS Headers Middleware (For Cross-Origin Requests)
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
-
+// Endpoint
 app.post('/api/logTransaction', async (req, res) => {
   const { email, otp, txHash } = req.body;
 
@@ -26,25 +20,16 @@ app.post('/api/logTransaction', async (req, res) => {
 
   console.log('Received transaction:', { email, otp, txHash });
 
-  // Google Apps Script Web App URL (Replace with your actual URL)
-  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbwVf1imYqnB6_4KP2B5cozzJ6A0wuLOCdlykTJZDzXsmrAJfkCWqI5h4NrjZw2IgZ_L/exec";
-
-  // Prepare payload to send to Google Apps Script
-  const payload = {
-    email,
-    otp,
-    txHash,
-  };
+  // Google Apps Script URL (replace with yours if needed)
+  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbxxfioLUCNvWq1n9JNp2d7Udz7Twl-q3XlHIAdTDk38i9tNfSoyc3dpG48snNXQ5Ti_/exec";
 
   try {
-    // Send the POST request to Google Apps Script using Axios
-    const response = await axios.post(googleAppsScriptUrl, payload, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const response = await axios.post(googleAppsScriptUrl, { email, otp, txHash }, {
+      headers: { 'Content-Type': 'application/json' }
     });
 
-    // Check if Google Apps Script responds with success
+    console.log('Google Apps Script Response:', response.data);
+
     if (response.data.message === "Transaction logged successfully and email sent") {
       return res.status(200).json({ message: 'Please Check your Email for the details of the Transaction.' });
     } else {
@@ -56,10 +41,7 @@ app.post('/api/logTransaction', async (req, res) => {
   }
 });
 
-
-
-// Start the server
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
