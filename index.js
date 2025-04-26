@@ -86,32 +86,17 @@ app.post('/api/verify', async (req, res) => {
 app.post('/api/deleteHash', async (req, res) => {
   const { hash } = req.body;
 
+  // ✅ Log the received hash to the server console
+  console.log("Received hash to delete:", hash);
+
   if (!hash) {
     return res.status(400).json({ error: 'Hash is required' });
   }
 
-  console.log("Received hash to delete:", hash);
-
-  try {
-    const response = await axios.post(
-      'https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec',
-      { hash },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    const { success, message } = response.data;
-
-    if (success) {
-      return res.status(200).json({ message });  // Returns "Welcome"
-    } else {
-      return res.status(404).json({ message: message || 'Hash not found' });
-    }
-
-  } catch (error) {
-    console.error('Error deleting hash:', error.message);
-    return res.status(500).json({ error: 'Failed to delete hash' });
-  }
+  // Respond with success — no forwarding to Google Apps Script if you just want logging
+  return res.status(200).json({ success: true, message: 'Hash received and logged.' });
 });
+
 
 // Start the server
 app.listen(PORT, () => {
