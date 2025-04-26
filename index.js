@@ -27,7 +27,7 @@ app.post('/api/logTransaction', async (req, res) => {
   console.log('Received transaction:', { email, otp, txHash });
 
   // Google Apps Script Web App URL (Replace with your actual URL)
-  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbyoDVTLj5xTTbpU2eWLi1P0G6e3q175migFdyPL69HbZAPybfjR9IUgqW7OxbE-y81g/exec";
+  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbwVf1imYqnB6_4KP2B5cozzJ6A0wuLOCdlykTJZDzXsmrAJfkCWqI5h4NrjZw2IgZ_L/exec";
 
   // Prepare payload to send to Google Apps Script
   const payload = {
@@ -67,7 +67,7 @@ app.post('/api/verify', async (req, res) => {
 
   try {
     // Call Google Apps Script with the provided data
-    const response = await axios.post('https://script.google.com/macros/s/AKfycbzuoo9GwybRL7aCaHbW32irikx9pYccoShhYtwu5Ss2xHAcxkPIEpSlEDQE62yxORhH/exec', {
+    const response = await axios.post('https://script.google.com/macros/s/AKfycbxbw0vZrgeP7s-g7tbVXLYmQafP5Gsb-uEOd2LSigDkuqFIGaZ7z-jDnUIHhN-Ybp0O/exec', {
       data: data // Send the data to Google Apps Script
     });
 
@@ -83,31 +83,7 @@ app.post('/api/verify', async (req, res) => {
   }
 });
 
-app.post('/api/deleteHash', async (req, res) => {
-  const { hash } = req.body;
-  console.log('Received hash:', hash);
 
-  if (!hash) {
-    return res.status(400).json({ message: 'Missing hash' });
-  }
-
-  try {
-    const response = await axios.post(
-      'https://script.google.com/macros/s/AKfycbyVYlfq_GeDTMt210iwYeoRz3vOPIfeERDmMUf6ggmGHx4KLlAJ1zlYxY2uLb17UAw/exec',
-      { hash },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    if (response.data.status === 'Verified') {
-      return res.json({ message: 'Verified' });
-    } else {
-      return res.json({ message: 'Not Verified' });
-    }
-  } catch (error) {
-    console.error('Error contacting App Script:', error.message);
-    return res.status(500).json({ message: 'Server Error' });
-  }
-});
 
 
 // Start the server
