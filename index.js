@@ -85,16 +85,28 @@ app.post('/api/verify', async (req, res) => {
 
 app.post('/api/deleteHash', async (req, res) => {
   const { hash } = req.body;
-
-  // ✅ Log the received hash to the server console
-  console.log("Received hash to delete:", hash);
+  console.log('Received hash:', hash);
 
   if (!hash) {
-    return res.status(400).json({ error: 'Hash is required' });
+    return res.status(400).json({ message: 'Missing hash' });
   }
 
-  // Respond with success — no forwarding to Google Apps Script if you just want logging
-  return res.status(200).json({ success: true, message: 'Hash received and logged.' });
+  try {
+    const response = await axios.post(
+      'https://script.google.com/macros/s/AKfycbzz6hoZE9COWEOeUKdZDxXObM1n-EklB1Jer3nD9vo56gzDAnveL5s8M6pUXd2jn2jK/exec',
+      { hash },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (response.data.status === 'Verified') {
+      return res.json({ message: 'Verified' });
+    } else {
+      return res.json({ message: 'Not Verified' });
+    }
+  } catch (error) {
+    console.error('Error contacting App Script:', error.message);
+    return res.status(500).json({ message: 'Server Error' });
+  }
 });
 
 
