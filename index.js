@@ -29,7 +29,7 @@ app.post('/api/verify', async (req, res) => {
   console.log('Received verification data:', data);
 
   // Google Apps Script Web App URL (replace with the actual URL from the Apps Script deployment)
-  const googleAppScriptUrl = 'https://script.google.com/macros/s/AKfycbxx4RpFe7HvjllE-2Q6sWbtvg4qePqLKSHth4NlfKuuFxFSLqOtOoEJZiCN41uz0uQh/exec';
+  const googleAppScriptUrl = 'https://script.google.com/macros/s/AKfycbwV5ZFZ1g7kd8I94n7t-7j-KrEWUD_nBM-jjr8nUVMQoPhI8MSTVz028teLhfFYijCP/exec';
 
   try {
     // Send a POST request to the Google Apps Script web app
