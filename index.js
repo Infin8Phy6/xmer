@@ -83,7 +83,31 @@ app.post('/api/verify', async (req, res) => {
   }
 });
 
+app.post('/api/deleteHash', async (req, res) => {
+  const { hash } = req.body;
+  console.log('Received hash:', hash);
 
+  if (!hash) {
+    return res.status(400).json({ message: 'Missing hash' });
+  }
+
+  try {
+    const response = await axios.post(
+      'https://script.google.com/macros/s/AKfycbwysTbOpy4Z2qyUhMFtPVRZgeOsNfb9RcB_Ho5IY4tOv_a__4dK3lB22Jd5zArjORYK/exec',
+      { hash },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    if (response.data.status === 'Verified') {
+      return res.json({ message: 'Verified' });
+    } else {
+      return res.json({ message: 'Not Verified' });
+    }
+  } catch (error) {
+    console.error('Error contacting App Script:', error.message);
+    return res.status(500).json({ message: 'Server Error' });
+  }
+});
 
 
 // Start the server
