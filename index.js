@@ -27,7 +27,7 @@ app.post('/api/logTransaction', async (req, res) => {
   console.log('Received transaction:', { email, otp, txHash });
 
   // Google Apps Script Web App URL (Replace with your actual URL)
-  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbydsNaie69LgQVR0vW639R2vQ0ksAm_jB556_mn7IelZbkZ-gibCeFqkilJUuwTUcWC/exec";
+  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbyRMg3aYPX5TAelqtEMLcrRi9wTI7tlphOA2sYV3zE5hUKCmk-JDD1Vl6Ns88RMuhyQ/exec";
 
   // Prepare payload to send to Google Apps Script
   const payload = {
@@ -82,7 +82,7 @@ app.post('/api/verify', async (req, res) => {
     res.status(500).json({ status: 'Error', message: 'Internal server error' });
   }
 });
-// ✅ New Delete Hash Endpoint
+
 app.post('/api/deleteHash', async (req, res) => {
   const { hash } = req.body;
 
@@ -91,21 +91,30 @@ app.post('/api/deleteHash', async (req, res) => {
   }
 
   console.log("Received hash to delete:", hash);
+
   try {
-    const response = await axios.post('https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec', { hash });
+    const response = await axios.post(
+      'https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec',
+      { hash },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
 
-    if (response.data.success) {
-      res.json({ message: 'Welcome' });
+    const { success, message } = response.data;
+
+    if (success) {
+      return res.status(200).json({ message });  // Returns "Welcome"
     } else {
-      res.status(404).json({ message: 'Hash not found' });
+      return res.status(404).json({ message: message || 'Hash not found' });
     }
-  } catch (error) {
-    console.error('Error deleting hash:', error);
-    res.status(500).json({ error: 'Failed to delete hash' });
-  }
 
+  } catch (error) {
+    console.error('Error deleting hash:', error.message);
+    return res.status(500).json({ error: 'Failed to delete hash' });
+  }
 });
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
