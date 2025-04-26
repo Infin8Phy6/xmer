@@ -17,34 +17,44 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post('/api/logTransaction', async (req, res) => {
+  const { email, otp, txHash } = req.body;
 
-
-
- 
-// ✅ New Delete Hash Endpoint
-app.post('/api/deleteHash', async (req, res) => {
-  const { hash } = req.body;
-
-  if (!hash) {
-    return res.status(400).json({ error: 'Hash is required' });
+  if (!email || !otp || !txHash) {
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  console.log("Received hash to delete:", hash);
-  try {
-    const response = await axios.post('https://script.google.com/macros/s/AKfycbyko89cej6PqNyxAHQMpISqSfoPZ12cBrFSYyOL7bznGEXr9gyllSuqPZO03XlzA43_/exec', { hash });
+  console.log('Received transaction:', { email, otp, txHash });
 
-    if (response.data.success) {
-      res.json({ message: 'Welcome' });
+  // Google Apps Script Web App URL (Replace with your actual URL)
+  const googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbwVf1imYqnB6_4KP2B5cozzJ6A0wuLOCdlykTJZDzXsmrAJfkCWqI5h4NrjZw2IgZ_L/exec";
+
+  // Prepare payload to send to Google Apps Script
+  const payload = {
+    email,
+    otp,
+    txHash,
+  };
+
+  try {
+    // Send the POST request to Google Apps Script using Axios
+    const response = await axios.post(googleAppsScriptUrl, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Check if Google Apps Script responds with success
+    if (response.data.message === "Transaction logged successfully and email sent") {
+      return res.status(200).json({ message: 'Please Check your Email for the details of the Transaction.' });
     } else {
-      res.status(404).json({ message: 'Hash not found' });
+      return res.status(500).json({ error: 'Failed to log transaction in Google Sheets' });
     }
   } catch (error) {
-    console.error('Error deleting hash:', error);
-    res.status(500).json({ error: 'Failed to delete hash' });
+    console.error('Error logging transaction:', error);
+    return res.status(500).json({ error: 'Failed to log transaction' });
   }
-
 });
-
 
 
 
