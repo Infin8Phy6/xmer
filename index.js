@@ -9,7 +9,13 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-
+// ✅ CORS Headers Middleware (For Cross-Origin Requests)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  next();
+});
 // Endpoint to receive hash and check it in Google Sheets
 app.post('/api/deleteHash', async (req, res) => {
   const { hash } = req.body;
