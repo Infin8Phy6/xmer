@@ -41,6 +41,35 @@ app.post('/api/logTransaction', async (req, res) => {
   }
 });
 
+//end point 2
+
+// Endpoint to receive hash and check it in Google Sheets
+app.post('/api/deleteHash', async (req, res) => {
+  const { hash } = req.body;
+
+  // Check if the hash is provided
+  if (!hash) {
+    return res.status(400).json({ error: 'Hash is required' });
+  }
+
+  try {
+    // Send the hash to Google Apps Script for verification
+    const googleAppsScriptUrls = 'https://script.google.com/macros/s/AKfycbyMwhGxdvKKhU_GSn_n5rmuHnUjtQGnBtVLQNNU8WNF_FbitnIOXM2tezjPF5mIzYCe/exec'; // Ensure this URL is correct
+
+    const response = await axios.post(googleAppsScriptUrls, { hash });
+
+    // If Google Apps Script response indicates the hash was verified
+    if (response.data.message === 'Hash === Verified') {
+      res.status(200).json({ message: 'Hash === Verified' });
+    } else {
+      res.status(400).json({ error: 'Hash not found or verification failed' });
+    }
+  } catch (error) {
+    console.error('Error verifying hash:', error);
+    res.status(500).json({ error: 'Failed to verify hash' });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
