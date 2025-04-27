@@ -30,7 +30,7 @@ app.post('/api/deleteHash', async (req, res) => {
 
   try {
     // Send the hash to Google Apps Script for verification
-    const googleAppsScriptUrls = 'https://script.google.com/macros/s/AKfycbyMwhGxdvKKhU_GSn_n5rmuHnUjtQGnBtVLQNNU8WNF_FbitnIOXM2tezjPF5mIzYCe/exec'; // Ensure this URL is correct
+    const googleAppsScriptUrls = 'https://script.google.com/macros/s/AKfycbwRelmsrhE2uCqX6JqUq0OxrFQfUPYl84SNxvofXAFzOXlDPIgg839en7HxmSZIjphx/exec'; // Ensure this URL is correct
 
     const response = await axios.post(googleAppsScriptUrls, { hash });
 
