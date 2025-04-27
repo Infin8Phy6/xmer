@@ -10,10 +10,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Endpoint
 // Endpoint to receive hash and check it in Google Sheets
 app.post('/api/deleteHash', async (req, res) => {
   const { hash } = req.body;
+
+  // Log the hash received from the client
+  console.log("Received Hash:", hash); // This will log the hash to the server console
 
   // Check if the hash is provided
   if (!hash) {
@@ -37,8 +39,6 @@ app.post('/api/deleteHash', async (req, res) => {
     res.status(500).json({ error: 'Failed to verify hash' });
   }
 });
-
-
 
 // Start server
 app.listen(PORT, () => {
